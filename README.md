@@ -1,23 +1,8 @@
 # Django REST Framework API Key
 
-API key permissions for the [Django REST Framework](https://www.django-rest-framework.org).
+This package forked from [djangorestframework-api-key](https://github.com/florimondmanca/djangorestframework-api-key).
 
-<div>
-  <a href="https://dev.azure.com/florimondmanca/public/_build/latest?definitionId=7&branchName=master">
-      <img src="https://dev.azure.com/florimondmanca/public/_apis/build/status/florimondmanca.djangorestframework-api-key?branchName=master" alt="build status"/>
-  </a>
-  <a href="https://codecov.io/gh/florimondmanca/djangorestframework-api-key">
-      <img src="https://codecov.io/gh/florimondmanca/djangorestframework-api-key/branch/master/graph/badge.svg" alt="coverage">
-  </a>
-  <a href="https://pypi.org/project/djangorestframework-api-key">
-      <img src="https://badge.fury.io/py/djangorestframework-api-key.svg" alt="package version"/>
-  </a>
-</div>
-<div>
-  <img src="https://img.shields.io/pypi/pyversions/djangorestframework-api-key.svg" alt="python versions"/>
-  <img src="https://img.shields.io/pypi/djversions/djangorestframework-api-key.svg?colorB=44b78b" alt="django versions"/>
-  <img src="https://img.shields.io/badge/drf-3.8+-7f2d2d.svg" alt="drf versions"/>
-</div>
+API key permissions for the [Django REST Framework](https://www.django-rest-framework.org).
 
 ## Introduction
 
@@ -25,9 +10,9 @@ API key permissions for the [Django REST Framework](https://www.django-rest-fram
 
 ### Features
 
-- ✌️ **Simple to use**: create, view and revoke API keys via the admin site, or use built-in helpers to create API keys programmatically.
-- 🔒 **As secure as possible**: API keys are treated with the same level of care as user passwords. They are hashed using the default password hasher before being stored in the database, and only visible at creation.
-- 🎨 **Customizable**: satisfy specific business requirements by building your own customized API key models, permission classes and admin panels.
+- **Simple to use**: create, view and revoke API keys via the admin site, or use built-in helpers to create API keys programmatically.
+- **As secure as possible**: API keys are treated with the same level of care as user passwords. They are hashed using the default password hasher before being stored in the database, and only visible at creation.
+- **Customizable**: satisfy specific business requirements by building your own customized API key models, permission classes and admin panels.
 
 ### Should I use API keys?
 
@@ -52,7 +37,7 @@ They can also present enough security for authorizing internal services, such as
 Install with `pip`:
 
 ```bash
-pip install "djangorestframework-api-key==2.*"
+pip install "drf-api-key==2.*"
 ```
 
 _**Note**: It is highly recommended to **pin your dependency** to the latest major version (as depicted above), as breaking changes may and will happen between major releases._
@@ -65,7 +50,7 @@ Add the app to your `INSTALLED_APPS`:
 INSTALLED_APPS = [
   # ...
   "rest_framework",
-  "rest_framework_api_key",
+  "drf_api_key",
 ]
 ```
 
@@ -75,15 +60,15 @@ Run the included migrations:
 python manage.py migrate
 ```
 
-To learn how to configure permissions and manage API keys, head to the [Documentation](https://florimondmanca.github.io/djangorestframework-api-key).
+To learn how to configure permissions and manage API keys, head to the [Documentation](https://jitdev.github.io/drf-api-key/).
 
 ## Changelog
 
-See [CHANGELOG.md](https://github.com/florimondmanca/djangorestframework-api-key/tree/master/CHANGELOG.md).
+See [CHANGELOG.md](https://github.com/JITdev/drf-api-key/blob/main/CHANGELOG.md).
 
 ## Contributing
 
-See [CONTRIBUTING.md](https://github.com/florimondmanca/djangorestframework-api-key/tree/master/CONTRIBUTING.md).
+See [CONTRIBUTING.md](https://github.com/JITdev/drf-api-key/blob/main/CONTRIBUTING.md).
 
 ## License
 
