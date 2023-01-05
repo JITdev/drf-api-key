@@ -9,8 +9,8 @@ from django.test import RequestFactory
 from test_project.heroes.admin import HeroAPIKeyModelAdmin
 from test_project.heroes.models import Hero, HeroAPIKey
 
-from rest_framework_api_key.admin import APIKeyModelAdmin
-from rest_framework_api_key.models import APIKey
+from drf_api_key.admin import APIKeyModelAdmin
+from drf_api_key.models import APIKey
 
 
 def build_admin_request(rf: RequestFactory) -> HttpRequest:

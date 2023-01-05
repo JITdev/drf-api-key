@@ -7,8 +7,8 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.test import force_authenticate
 
-from rest_framework_api_key.models import APIKey
-from rest_framework_api_key.permissions import HasAPIKey
+from drf_api_key.models import APIKey
+from drf_api_key.permissions import HasAPIKey
 
 pytestmark = pytest.mark.django_db
 

@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from test_project.heroes.models import Hero, HeroAPIKey
 from test_project.heroes.permissions import HasHeroAPIKey
 
-from rest_framework_api_key.models import APIKey
+from drf_api_key.models import APIKey
 
 pytestmark = pytest.mark.django_db
 

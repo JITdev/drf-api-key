@@ -1,6 +1,6 @@
 from django.db import models
 
-from rest_framework_api_key.models import AbstractAPIKey, BaseAPIKeyManager
+from drf_api_key.models import AbstractAPIKey, BaseAPIKeyManager
 
 
 class Hero(models.Model):

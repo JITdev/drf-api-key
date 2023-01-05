@@ -4,8 +4,8 @@ import pytest
 from django.contrib.auth.hashers import make_password
 from django.utils.crypto import get_random_string
 
-from rest_framework_api_key.crypto import KeyGenerator
-from rest_framework_api_key.models import APIKey, BaseAPIKeyManager
+from drf_api_key.crypto import KeyGenerator
+from drf_api_key.models import APIKey, BaseAPIKeyManager
 
 pytestmark = pytest.mark.django_db
 

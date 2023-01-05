@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 from django.db.utils import IntegrityError
 from test_project.heroes.models import Hero, HeroAPIKey
 
-from rest_framework_api_key.models import APIKey
+from drf_api_key.models import APIKey
 
 from .dateutils import NOW, TOMORROW, YESTERDAY
 
