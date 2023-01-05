@@ -27,8 +27,8 @@ setup(
     project_urls={
         "Documentation": "https://jitdev.github.io/drf-api-key/"
     },
-    author="Florimond Manca",
-    author_email="florimond.manca@gmail.com",
+    author="Roland Kainrath",
+    author_email="justintimedev@gmail.com",
     packages=find_packages("src"),
     package_dir={"": "src"},
     include_package_data=True,
