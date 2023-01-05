@@ -3,12 +3,13 @@ import os
 import pathlib
 import sys
 
-import dotenv
+from dotenv import load_dotenv
 
 root = pathlib.Path(__file__).parent.parent
 
+
 if __name__ == "__main__":
-    dotenv.read_dotenv(str(root / ".env"))
+    load_dotenv(str(root / ".env"))
 
     sys.path.append(str(root))
 
