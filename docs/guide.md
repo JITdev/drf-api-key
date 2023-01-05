@@ -7,7 +7,7 @@
 Install from PyPI:
 
 ```bash
-pip install djangorestframework-api-key
+pip install drf-api-key
 ```
 
 **Note**: this package requires Python 3.7+, Django 2.0+ and Django REST Framework 3.8+.
@@ -22,7 +22,7 @@ Add the app to your `INSTALLED_APPS`:
 INSTALLED_APPS = [
   # ...
   "rest_framework",
-  "rest_framework_api_key",
+  "drf_api_key",
 ]
 ```
 
@@ -42,7 +42,7 @@ You can set the permission globally:
 # settings.py
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework_api_key.permissions.HasAPIKey",
+        "drf_api_key.permissions.HasAPIKey",
     ]
 }
 ```
@@ -52,7 +52,7 @@ or on a per-view basis:
 ```python
 # views.py
 from rest_framework.views import APIView
-from rest_framework_api_key.permissions import HasAPIKey
+from drf_api_key.permissions import HasAPIKey
 
 class UserListView(APIView):
     permission_classes = [HasAPIKey]
@@ -68,7 +68,7 @@ See also [Setting the permission policy](http://www.django-rest-framework.org/ap
 
     ```python
     from rest_framework.permissions import IsAuthenticated
-    from rest_framework_api_key.permissions import HasAPIKey
+    from drf_api_key.permissions import HasAPIKey
     # ...
     permission_classes = [HasAPIKey | IsAuthenticated]
     ```
@@ -110,7 +110,7 @@ X-Api-Key: <API_KEY>
 
 where `<API_KEY>` refers to the full generated API key.
 
-Please refer to [HttpRequest.META](https://docs.djangoproject.com/en/2.2/ref/request-response/#django.http.HttpRequest.META) for more information on headers in Django.
+Please refer to [HttpRequest.META](https://docs.djangoproject.com/en/3.2/ref/request-response/#django.http.HttpRequest.META) for more information on headers in Django.
 
 ### Creating and managing API keys
 
@@ -126,7 +126,7 @@ When it is installed, `djangorestframework-api-key` adds an "API Key Permissions
 API keys can be created, viewed and revoked programmatically by manipulating the `APIKey` model.
 
 !!! note
-    The examples below use the [Django shell](https://docs.djangoproject.com/en/2.2/ref/django-admin/#django-admin-shell).
+    The examples below use the [Django shell](https://docs.djangoproject.com/en/3.2/ref/django-admin/#django-admin-shell).
 
 - You can view and query `APIKey` like any other model. For example, to know the total number of API keys:
 
@@ -175,8 +175,8 @@ This package provides various customization APIs that allow you to extend its ba
 If the built-in `APIKey` model doesn't fit your needs, you can create your own by subclassing `AbstractAPIKey`. This is particularly useful if you need to **store extra information** or **link API keys to other models** using a `ForeignKey` or a `ManyToManyField`.
 
 !!! warning
-    Associating API keys to users, directly or indirectly, can present a security risk. See also: [Should I use API keys?](https://florimondmanca.github.io/djangorestframework-api-key/#should-i-use-api-keys).
- 
+    Associating API keys to users, directly or indirectly, can present a security risk. See also: [Should I use API keys?](https://jitdev.github.io/drf-api-key/#should-i-use-api-keys).
+
 #### Example
 
 Here's how you could link API keys to an imaginary `Organization` model:
@@ -210,7 +210,7 @@ class OrganizationAPIKey(AbstractAPIKey):
 
 #### Migrations
 
-Because `AbstractAPIKey` is an [abstract model](https://docs.djangoproject.com/en/2.2/topics/db/models/#abstract-base-classes), the custom API key model will have its own table in the database.
+Because `AbstractAPIKey` is an [abstract model](https://docs.djangoproject.com/en/3.2/topics/db/models/#abstract-base-classes), the custom API key model will have its own table in the database.
 
 This means that you need to **generate a migration** and then **apply it** to be able to query the new API key model:
 
@@ -224,11 +224,11 @@ python manage.py migrate
 
 #### Managers
 
-The `APIKey` model as well as custom API keys models inherited from `AbstractAPIKey` have a dedicated [manager](https://docs.djangoproject.com/en/2.2/topics/db/managers) which is responsible for implementing `.create_key()` and other important behavior.
+The `APIKey` model as well as custom API keys models inherited from `AbstractAPIKey` have a dedicated [manager](https://docs.djangoproject.com/en/3.2/topics/db/managers) which is responsible for implementing `.create_key()` and other important behavior.
 
 As a result, if you want to build a custom API key manager, it should inherit from `BaseAPIKeyManager` instead of Django's `Manager`.
 
-Besides [customization APIs that come with Django's managers](https://docs.djangoproject.com/en/2.2/topics/db/managers/#custom-managers), `BaseAPIKeyManager` gives you one extra hook: you can override `.get_usable_keys()` to customize which set of API keys clients can use in authorized requests.
+Besides [customization APIs that come with Django's managers](https://docs.djangoproject.com/en/3.2/topics/db/managers/#custom-managers), `BaseAPIKeyManager` gives you one extra hook: you can override `.get_usable_keys()` to customize which set of API keys clients can use in authorized requests.
 
 For example, here's how to restrict usable keys to those of active organizations only:
 
@@ -246,7 +246,7 @@ class OrganizationAPIKeyManager(BaseAPIKeyManager):
 
 #### Admin panel
 
-If you'd like to view and manage your custom API key model via the [Django admin site](https://docs.djangoproject.com/en/2.2/ref/contrib/admin/), you can create and register a subclass of `APIKeyModelAdmin`:
+If you'd like to view and manage your custom API key model via the [Django admin site](https://docs.djangoproject.com/en/3.2/ref/contrib/admin/), you can create and register a subclass of `APIKeyModelAdmin`:
 
 ```python
 # organizations/admin.py
@@ -267,7 +267,7 @@ You can also customize any of the default attributes defined in `APIKeyModelAdmi
 ```
 
 !!! question "How can I display API keys on the detail page of a related model instance?"
-    In theory, this could be done using Django's [`InlineModelAdmin`](https://docs.djangoproject.com/en/2.2/ref/contrib/admin/#inlinemodeladmin-objects).
+    In theory, this could be done using Django's [`InlineModelAdmin`](https://docs.djangoproject.com/en/3.2/ref/contrib/admin/#inlinemodeladmin-objects).
 
     However, due to the limitations of inlines, this cannot be easily achieved while correctly saving and displaying the generated key in the detail page of the related model.
 
@@ -291,7 +291,7 @@ class HasOrganizationAPIKey(BaseHasAPIKey):
 You can then use `HasOrganizationAPIKey` as described in [Setting permissions](#setting-permissions).
 
 !!! tip
-    If you need to customize `.has_permission()` or `.has_object_permission()`, feel free to read the [source code](https://github.com/florimondmanca/djangorestframework-api-key/blob/master/src/rest_framework_api_key/permissions.py).
+    If you need to customize `.has_permission()` or `.has_object_permission()`, feel free to read the [source code](https://jitdev.github.io/drf-api-key/blob/main/src/rest_framework_api_key/permissions.py).
 
 #### API key parsing
 
@@ -322,7 +322,7 @@ class HasAPIKey(BaseHasAPIKey):
 
 You can also override the default header-based parsing completely.
 
-To do so, redefine the `.get_key()` method on your custom permission class. This method accepts the [HttpRequest](https://docs.djangoproject.com/en/2.2/ref/request-response/#httprequest-objects) object as unique argument and should return the API key as an `str` if one was found, or `None` otherwise.
+To do so, redefine the `.get_key()` method on your custom permission class. This method accepts the [HttpRequest](https://docs.djangoproject.com/en/3.2/ref/request-response/#httprequest-objects) object as unique argument and should return the API key as an `str` if one was found, or `None` otherwise.
 
 For example, here's how you could retrieve the API key from a cookie:
 
@@ -372,14 +372,14 @@ class OrganizationAPIKey(AbstractAPIKey):
     # ...
 ```
 
-If you want to replace the key generation algorithm entirely, you can create your own `KeyGenerator` class. It must implement the `.generate()` and `.verify()` methods. At this point, it's probably best to read the [source code](https://github.com/florimondmanca/djangorestframework-api-key/blob/master/src/rest_framework_api_key/crypto.py) for the built-in `KeyGenerator`.
+If you want to replace the key generation algorithm entirely, you can create your own `KeyGenerator` class. It must implement the `.generate()` and `.verify()` methods. At this point, it's probably best to read the [source code](https://jitdev.github.io/drf-api-key/blob/main/src/rest_framework_api_key/crypto.py) for the built-in `KeyGenerator`.
 
 !!! check
     If the signature of your `.generate()` method is different from the built-in one, you'll need to override `.assign_key()` in your custom API key manager as well.
-    
+
     Likewise, if `.verify()` must accept anything else than the `key` and `hashed_key`, you'll need to override `.is_valid()` on your custom API key model.
-    
-    See [models.py](https://github.com/florimondmanca/djangorestframework-api-key/blob/master/src/rest_framework_api_key/models.py) for the source code of `BaseAPIKeyManager`.
+
+    See [models.py](https://jitdev.github.io/drf-api-key/blob/main/src/rest_framework_api_key/models.py) for the source code of `BaseAPIKeyManager`.
 
 ## Typing support
 

@@ -1,28 +1,4 @@
-<div align="center">
-  <h1 style="margin-bottom: 0;">Django REST Framework API Key</h1>
-  <p style="margin-top: 1em; margin-bottom: 2em; font-size: large;">
-    API key permissions for
-    <a href="https://www.django-rest-framework.org" alt="drf" target="_blank" rel="noreferrer">
-      Django REST Framework
-    </a>
-  </p>
-  <div>
-    <a href="https://dev.azure.com/florimondmanca/public/_build/latest?definitionId=7&branchName=master" target="_blank" rel="noreferrer">
-      <img src="https://dev.azure.com/florimondmanca/public/_apis/build/status/florimondmanca.djangorestframework-api-key?branchName=master" alt="build status"/>
-    </a>
-    <a href="https://codecov.io/gh/florimondmanca/djangorestframework-api-key">
-      <img src="https://codecov.io/gh/florimondmanca/djangorestframework-api-key/branch/master/graph/badge.svg" alt="coverage">
-    </a>
-    <a href="https://pypi.org/project/djangorestframework-api-key" target="_blank" rel="noreferrer">
-      <img src="https://badge.fury.io/py/djangorestframework-api-key.svg" alt="package version"/>
-    </a>
-  </div>
-  <div>
-    <img src="https://img.shields.io/pypi/pyversions/djangorestframework-api-key.svg" alt="python versions"/>
-    <img src="https://img.shields.io/pypi/djversions/djangorestframework-api-key.svg?colorB=44b78b" alt="django versions"/>
-    <img src="https://img.shields.io/badge/drf-3.8+-7f2d2d.svg" alt="drf versions"/>
-  </div>
-</div>
+# Django REST Framework API Key documentation
 
 ## Introduction
 
@@ -30,9 +6,9 @@
 
 ### Features
 
-- ✌️ **Simple to use**: create, view and revoke API keys via the admin site, or use built-in helpers to create API keys programmatically.
-- 🔒 **As secure as possible**: API keys are treated with the same level of care than user passwords. They are hashed using the default password hasher before being stored in the database, and only visible at creation.
-- 🎨 **Customizable**: satisfy specific business requirements by building your own customized API key models, permission classes and admin panels.
+- **Simple to use**: create, view and revoke API keys via the admin site, or use built-in helpers to create API keys programmatically.
+- **As secure as possible**: API keys are treated with the same level of care than user passwords. They are hashed using the default password hasher before being stored in the database, and only visible at creation.
+- **Customizable**: satisfy specific business requirements by building your own customized API key models, permission classes and admin panels.
 
 ### Should I use API keys?
 
@@ -58,7 +34,7 @@ They can also present enough security for authorizing internal services, such as
 Install with `pip`:
 
 ```bash
-pip install "djangorestframework-api-key==2.*"
+pip install "drf-api-key==2.*"
 ```
 
 !!! important
@@ -72,7 +48,7 @@ Add the app to your `INSTALLED_APPS`:
 INSTALLED_APPS = [
   # ...
   "rest_framework",
-  "rest_framework_api_key",
+  "drf_api_key",
 ]
 ```
 
