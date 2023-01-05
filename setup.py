@@ -18,14 +18,14 @@ def get_long_description() -> str:
 
 
 setup(
-    name="djangorestframework-api-key",
-    version=get_version("rest_framework_api_key"),
+    name="drf-api-key",
+    version=get_version("drf_api_key"),
     description="API key permissions for the Django REST Framework",
     long_description=get_long_description(),
     long_description_content_type="text/markdown",
-    url="http://github.com/florimondmanca/djangorestframework-api-key",
+    url="https://jitdev.github.io/drf-api-key/",
     project_urls={
-        "Documentation": "https://florimondmanca.github.io/djangorestframework-api-key/"
+        "Documentation": "https://jitdev.github.io/drf-api-key/"
     },
     author="Florimond Manca",
     author_email="florimond.manca@gmail.com",
@@ -45,6 +45,7 @@ setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
         "Environment :: Web Environment",
         "Topic :: Software Development :: Libraries :: Python Modules",
         "Framework :: Django",
