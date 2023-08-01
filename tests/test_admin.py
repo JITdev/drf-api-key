@@ -14,7 +14,7 @@ from drf_api_key.models import APIKey
 
 
 def build_admin_request(rf: RequestFactory) -> HttpRequest:
-    request = rf.post("/")
+    request = rf.post('/')
 
     def get_response(request: HttpRequest) -> HttpResponse:
         raise NotImplementedError  # pragma: no cover  # Unused in these tests.
@@ -36,17 +36,17 @@ def test_admin_readonly_fields(rf: RequestFactory) -> None:
 
     admin = APIKeyModelAdmin(APIKey, site)
 
-    assert admin.get_readonly_fields(request) == ("prefix",)
+    assert admin.get_readonly_fields(request) == ('prefix',)
 
-    api_key = APIKey(name="test")
-    assert admin.get_readonly_fields(request, obj=api_key) == ("prefix",)
+    api_key = APIKey(name='test')
+    assert admin.get_readonly_fields(request, api_key_obj=api_key) == ('prefix',)
 
-    api_key = APIKey(name="test", revoked=True)
-    assert admin.get_readonly_fields(request, obj=api_key) == (
-        "prefix",
-        "name",
-        "revoked",
-        "expiry_date",
+    api_key = APIKey(name='test', revoked=True)
+    assert admin.get_readonly_fields(request, api_key_obj=api_key) == (
+        'prefix',
+        'name',
+        'revoked',
+        'expiry_date',
     )
 
 
@@ -55,10 +55,10 @@ def test_admin_create_api_key(rf: RequestFactory) -> None:
     request = build_admin_request(rf)
 
     admin = APIKeyModelAdmin(APIKey, site)
-    api_key = APIKey(name="test")
+    api_key = APIKey(name='test')
 
     assert not api_key.pk
-    admin.save_model(request, obj=api_key)
+    admin.save_model(request, key_obj=api_key)
     assert api_key.pk
 
     messages = get_messages(request)
@@ -70,7 +70,7 @@ def test_admin_create_custom_api_key(rf: RequestFactory) -> None:
     request = build_admin_request(rf)
 
     admin = HeroAPIKeyModelAdmin(HeroAPIKey, site)
-    api_key = HeroAPIKey(name="test", hero=Hero.objects.create())
+    api_key = HeroAPIKey(name='test', hero=Hero.objects.create())
 
     assert not api_key.pk
     admin.save_model(request, obj=api_key)
@@ -85,9 +85,9 @@ def test_admin_update_api_key(rf: RequestFactory) -> None:
     request = build_admin_request(rf)
 
     admin = APIKeyModelAdmin(APIKey, site)
-    api_key, _ = APIKey.objects.create_key(name="test")
+    api_key, _ = APIKey.objects.create_key(name='test')
 
-    api_key.name = "another-test"
-    admin.save_model(request, obj=api_key)
+    api_key.name = 'another-test'
+    admin.save_model(request, key_obj=api_key)
     refreshed = APIKey.objects.get(pk=api_key.pk)
-    assert refreshed.name == "another-test"
+    assert refreshed.name == 'another-test'

@@ -18,9 +18,9 @@ def view(request: Request) -> Response:
 
 
 def test_non_hero_api_key_denied(rf: RequestFactory) -> None:
-    _, key = APIKey.objects.create_key(name="test")
-    authorization = f"Api-Key {key}"
-    request = rf.get("/test/", HTTP_AUTHORIZATION=authorization)
+    _, key = APIKey.objects.create_key(name='test')
+    authorization = f'Api-Key {key}'
+    request = rf.get('/test/', HTTP_AUTHORIZATION=authorization)
 
     response = view(request)
     assert response.status_code == 403
@@ -28,9 +28,9 @@ def test_non_hero_api_key_denied(rf: RequestFactory) -> None:
 
 def test_hero_api_key_granted(rf: RequestFactory) -> None:
     hero = Hero.objects.create()
-    _, key = HeroAPIKey.objects.create_key(name="test", hero=hero)
-    authorization = f"Api-Key {key}"
-    request = rf.get("/test/", HTTP_AUTHORIZATION=authorization)
+    _, key = HeroAPIKey.objects.create_key(name='test', hero=hero)
+    authorization = f'Api-Key {key}'
+    request = rf.get('/test/', HTTP_AUTHORIZATION=authorization)
 
     response = view(request)
     assert response.status_code == 200
@@ -38,9 +38,9 @@ def test_hero_api_key_granted(rf: RequestFactory) -> None:
 
 def test_retired_hero_denied(rf: RequestFactory) -> None:
     hero = Hero.objects.create(retired=True)
-    _, key = HeroAPIKey.objects.create_key(name="test", hero=hero)
-    authorization = f"Api-Key {key}"
-    request = rf.get("/test/", HTTP_AUTHORIZATION=authorization)
+    _, key = HeroAPIKey.objects.create_key(name='test', hero=hero)
+    authorization = f'Api-Key {key}'
+    request = rf.get('/test/', HTTP_AUTHORIZATION=authorization)
 
     response = view(request)
     assert response.status_code == 403

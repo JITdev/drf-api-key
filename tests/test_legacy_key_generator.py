@@ -26,8 +26,8 @@ class LegacyKeyGenerator(KeyGenerator):
         # have no dependencies on the current `rest_framework_api_key` package.
         prefix = get_random_string(8)
         secret_key = get_random_string(32)
-        key = prefix + "." + secret_key
-        key_id = prefix + "." + make_password(key)
+        key = prefix + '.' + secret_key
+        key_id = prefix + '.' + make_password(key)
         return key, key_id
 
 
@@ -38,5 +38,5 @@ def test_manager_with_legacy_key_generator() -> None:
     manager = Manager()
     manager.model = APIKey
 
-    api_key, generated_key = manager.create_key(name="test")
+    api_key, generated_key = manager.create_key(name='test')
     assert api_key.is_valid(generated_key)

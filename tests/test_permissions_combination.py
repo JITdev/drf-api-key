@@ -22,9 +22,9 @@ def view(request: Request) -> Response:
 def test_if_authenticated_and_no_api_key_then_permission_granted(
     rf: RequestFactory,
 ) -> None:
-    user = get_user_model().objects.create_user(username="foo", password="bar")
+    user = get_user_model().objects.create_user(username='foo', password='bar')
 
-    request = rf.get("/test/")
+    request = rf.get('/test/')
     force_authenticate(request, user)
 
     response = view(request)
@@ -34,12 +34,12 @@ def test_if_authenticated_and_no_api_key_then_permission_granted(
 def test_if_authenticated_and_revoked_api_key_then_permission_granted(
     rf: RequestFactory,
 ) -> None:
-    user = get_user_model().objects.create_user(username="foo", password="bar")
+    user = get_user_model().objects.create_user(username='foo', password='bar')
 
-    _, key = APIKey.objects.create_key(name="test", revoked=True)
-    authorization = f"Api-Key {key}"
+    _, key = APIKey.objects.create_key(name='test', revoked=True)
+    authorization = f'Api-Key {key}'
 
-    request = rf.get("/test/", HTTP_AUTHORIZATION=authorization)
+    request = rf.get('/test/', HTTP_AUTHORIZATION=authorization)
     force_authenticate(request, user)
 
     response = view(request)

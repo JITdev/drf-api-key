@@ -10,7 +10,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 from drf_api_key.models import APIKey
-from drf_api_key.permissions import BaseHasAPIKey, HasAPIKey, KeyParser
+from drf_api_key.permissions import BaseAPIKeyPermission, HasAPIKey, KeyParser
 
 pytestmark = pytest.mark.django_db
 
@@ -22,9 +22,9 @@ def view(request: Request) -> Response:
 
 
 def test_if_valid_api_key_then_permission_granted(rf: RequestFactory) -> None:
-    _, key = APIKey.objects.create_key(name="test")
-    authorization = f"Api-Key {key}"
-    request = rf.get("/test/", HTTP_AUTHORIZATION=authorization)
+    _, key = APIKey.objects.create_key(name='test')
+    authorization = f'Api-Key {key}'
+    request = rf.get('/test/', HTTP_AUTHORIZATION=authorization)
 
     response = view(request)
     assert response.status_code == 200
@@ -33,45 +33,45 @@ def test_if_valid_api_key_then_permission_granted(rf: RequestFactory) -> None:
 def test_if_valid_api_key_custom_header_then_permission_granted(
     rf: RequestFactory,
 ) -> None:
-    with override_settings(API_KEY_CUSTOM_HEADER="HTTP_X_API_KEY"):
-        _, key = APIKey.objects.create_key(name="test")
-        request = rf.get("/test/", HTTP_X_API_KEY=key)
+    with override_settings(API_KEY_CUSTOM_HEADER='HTTP_X_API_KEY'):
+        _, key = APIKey.objects.create_key(name='test')
+        request = rf.get('/test/', HTTP_X_API_KEY=key)
 
         response = view(request)
         assert response.status_code == 200
 
 
-@pytest.mark.parametrize("hasher", PASSWORD_HASHERS)
+@pytest.mark.parametrize('hasher', PASSWORD_HASHERS)
 def test_hashers(rf: RequestFactory, hasher: str) -> None:
     with override_settings(PASSWORD_HASHERS=[hasher]):
-        _, key = APIKey.objects.create_key(name="test")
-        authorization = f"Api-Key {key}"
-        request = rf.get("/test/", HTTP_AUTHORIZATION=authorization)
+        _, key = APIKey.objects.create_key(name='test')
+        authorization = f'Api-Key {key}'
+        request = rf.get('/test/', HTTP_AUTHORIZATION=authorization)
 
         response = view(request)
         assert response.status_code == 200
 
 
 def test_if_no_api_key_then_permission_denied(rf: RequestFactory) -> None:
-    request = rf.get("/test/")
+    request = rf.get('/test/')
 
     response = view(request)
     assert response.status_code == 403
 
 
 def _scramble_prefix(key: str) -> str:
-    prefix, _, secret_key = key.partition(".")
+    prefix, _, secret_key = key.partition('.')
     truncated_prefix = prefix[:-1]
-    return truncated_prefix + "." + secret_key
+    return truncated_prefix + '.' + secret_key
 
 
 @pytest.mark.parametrize(
-    "modifier",
+    'modifier',
     [
-        lambda _: "",
-        lambda _: "abcd",
-        lambda _: "foo.bar",
-        lambda key: " " + key,
+        lambda _: '',
+        lambda _: 'abcd',
+        lambda _: 'foo.bar',
+        lambda key: ' ' + key,
         lambda key: key.upper(),
         lambda key: key.lower(),
         lambda key: _scramble_prefix(key),
@@ -81,27 +81,27 @@ def test_if_invalid_api_key_then_permission_denied(
     rf: RequestFactory,
     modifier: Callable[[str], str],
 ) -> None:
-    _, key = APIKey.objects.create_key(name="test")
-    authorization = f"Api-Key {modifier(key)}"
-    request = rf.get("/test/", HTTP_AUTHORIZATION=authorization)
+    _, key = APIKey.objects.create_key(name='test')
+    authorization = f'Api-Key {modifier(key)}'
+    request = rf.get('/test/', HTTP_AUTHORIZATION=authorization)
 
     response = view(request)
     assert response.status_code == 403
 
 
 @pytest.mark.parametrize(
-    "authorization_fmt",
+    'authorization_fmt',
     [
-        pytest.param("X-Key {key}", id="wrong-scheme"),
-        pytest.param("Api-Key:{key}", id="not-space-separated"),
+        pytest.param('X-Key {key}', id='wrong-scheme'),
+        pytest.param('Api-Key:{key}', id='not-space-separated'),
     ],
 )
 def test_if_malformed_authorization_then_permission_denied(
     rf: RequestFactory, authorization_fmt: str
 ) -> None:
-    _, key = APIKey.objects.create_key(name="test")
+    _, key = APIKey.objects.create_key(name='test')
     authorization = authorization_fmt.format(key=key)
-    request = rf.get("/test/", HTTP_AUTHORIZATION=authorization)
+    request = rf.get('/test/', HTTP_AUTHORIZATION=authorization)
     response = view(request)
     assert response.status_code == 403
 
@@ -109,17 +109,17 @@ def test_if_malformed_authorization_then_permission_denied(
 def test_if_invalid_api_key_custom_header_then_permission_denied(
     rf: RequestFactory,
 ) -> None:
-    with override_settings(API_KEY_CUSTOM_HEADER="HTTP_X_API_KEY"):
-        request = rf.get("/test/", HTTP_X_API_KEY="doesnotexist")
+    with override_settings(API_KEY_CUSTOM_HEADER='HTTP_X_API_KEY'):
+        request = rf.get('/test/', HTTP_X_API_KEY='doesnotexist')
 
         response = view(request)
         assert response.status_code == 403
 
 
 def test_if_revoked_then_permission_denied(rf: RequestFactory) -> None:
-    _, key = APIKey.objects.create_key(name="test", revoked=True)
-    authorization = f"Api-Key {key}"
-    request = rf.get("/test/", HTTP_AUTHORIZATION=authorization)
+    _, key = APIKey.objects.create_key(name='test', revoked=True)
+    authorization = f'Api-Key {key}'
+    request = rf.get('/test/', HTTP_AUTHORIZATION=authorization)
 
     response = view(request)
     assert response.status_code == 403
@@ -130,11 +130,11 @@ TOMORROW = NOW + dt.timedelta(days=1)
 TWO_DAYS_AGO = NOW - dt.timedelta(days=2)
 
 
-@pytest.mark.parametrize("expiry_date, ok", [(TOMORROW, True), (TWO_DAYS_AGO, False)])
+@pytest.mark.parametrize('expiry_date, ok', [(TOMORROW, True), (TWO_DAYS_AGO, False)])
 def test_expiry_date(rf: RequestFactory, expiry_date: dt.datetime, ok: bool) -> None:
-    _, key = APIKey.objects.create_key(name="test", expiry_date=expiry_date)
-    authorization = f"Api-Key {key}"
-    request = rf.get("/test/", HTTP_AUTHORIZATION=authorization)
+    _, key = APIKey.objects.create_key(name='test', expiry_date=expiry_date)
+    authorization = f'Api-Key {key}'
+    request = rf.get('/test/', HTTP_AUTHORIZATION=authorization)
 
     response = view(request)
     status_code = 200 if ok else 403
@@ -155,7 +155,7 @@ def test_object_permission(rf: RequestFactory) -> None:
 
     view = View.as_view()
 
-    request = rf.get("/test/")
+    request = rf.get('/test/')
 
     response = view(request)
     assert response.status_code == 403
@@ -163,9 +163,9 @@ def test_object_permission(rf: RequestFactory) -> None:
 
 def test_keyparser_keyword_override(rf: RequestFactory) -> None:
     class BearerKeyParser(KeyParser):
-        keyword = "Bearer"
+        keyword = 'Bearer'
 
-    class BearerHasAPIKey(BaseHasAPIKey):
+    class BearerHasAPIKey(BaseAPIKeyPermission):
         model = APIKey
         key_parser = BearerKeyParser()
 
@@ -174,9 +174,9 @@ def test_keyparser_keyword_override(rf: RequestFactory) -> None:
     def bearer_view(request: Request) -> Response:
         return Response()
 
-    _, key = APIKey.objects.create_key(name="test")
-    authorization = f"Bearer {key}"
-    request = rf.get("/test/", HTTP_AUTHORIZATION=authorization)
+    _, key = APIKey.objects.create_key(name='test')
+    authorization = f'Bearer {key}'
+    request = rf.get('/test/', HTTP_AUTHORIZATION=authorization)
 
     response = bearer_view(request)
     assert response.status_code == 200
