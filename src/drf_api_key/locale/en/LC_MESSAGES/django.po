@@ -1,0 +1,87 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-08-01 22:39+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: src/drf_api_key/admin.py:46
+#, python-brace-format
+msgctxt "messages"
+msgid ""
+"The API key for {name} is: {key}. Please store it somewhere safe: you will "
+"not be able to see it again."
+msgstr ""
+
+#: src/drf_api_key/models.py:51
+msgctxt "errors"
+msgid "Key is not valid."
+msgstr ""
+
+#: src/drf_api_key/models.py:79
+msgctxt "fields"
+msgid "id"
+msgstr ""
+
+#: src/drf_api_key/models.py:81
+msgctxt "fields"
+msgid "prefix"
+msgstr ""
+
+#: src/drf_api_key/models.py:82
+msgctxt "fields"
+msgid "hashed key"
+msgstr ""
+
+#: src/drf_api_key/models.py:83
+msgctxt "fields"
+msgid "created"
+msgstr ""
+
+#: src/drf_api_key/models.py:85
+msgctxt "fields"
+msgid "name"
+msgstr ""
+
+#: src/drf_api_key/models.py:89
+msgctxt "helptext"
+msgid "A free-form unique name for the API key."
+msgstr ""
+
+#: src/drf_api_key/models.py:92
+msgctxt "fields"
+msgid "revoked"
+msgstr ""
+
+#: src/drf_api_key/models.py:95
+msgctxt "helptext"
+msgid "If the API key is revoked, clients cannot use it anymore."
+msgstr ""
+
+#: src/drf_api_key/models.py:98
+msgctxt "fields"
+msgid "expiry date"
+msgstr ""
+
+#: src/drf_api_key/models.py:101
+msgctxt "helptext"
+msgid "Once API key expires, clients cannot use it anymore."
+msgstr ""
+
+#: src/drf_api_key/models.py:144
+msgctxt "errors"
+msgid "The API key has been revoked - cannot be undone."
+msgstr ""
