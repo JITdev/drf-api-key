@@ -1,8 +1,12 @@
-import django
+"""Application config."""
 
-from .__version__ import __version__
+from django.apps import AppConfig
 
-if django.VERSION < (3, 2):  # pragma: no cover
-    default_app_config = "drf_api_key.apps.RestFrameworkApiKeyConfig"
+__version__ = '2.2.1'
 
-__all__ = ["__version__", "default_app_config"]
+
+class RestFrameworkApiKeyConfig(AppConfig):
+    """Application config."""
+
+    name = 'drf_api_key'
+    verbose_name = 'API Key Permissions'
