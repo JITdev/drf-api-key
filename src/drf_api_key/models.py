@@ -1,147 +1,148 @@
+"""DRF API Key model definitions."""
+
 import typing
 
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
+from django.utils.translation import pgettext_lazy
 
-from .crypto import KeyGenerator, concatenate, split
+from drf_api_key.crypto import KeyGenerator, concatenate
 
 
 class BaseAPIKeyManager(models.Manager):
+    """Base API Key Manager."""
+
     key_generator = KeyGenerator()
 
-    def assign_key(self, obj: "AbstractAPIKey") -> str:
-        try:
-            key, prefix, hashed_key = self.key_generator.generate()
-        except ValueError:  # Compatibility with < 1.4
-            generate = typing.cast(
-                typing.Callable[[], typing.Tuple[str, str]], self.key_generator.generate
-            )
-            key, hashed_key = generate()
-            pk = hashed_key
-            prefix, hashed_key = split(hashed_key)
-        else:
-            pk = concatenate(prefix, hashed_key)
+    def assign_key(self, api_key_obj: 'AbstractAPIKey') -> str:
+        """Assign key to the referenced object."""
+        key, prefix, hashed_key = self.key_generator.generate()
+        pk = concatenate(prefix, hashed_key)
 
-        obj.id = pk
-        obj.prefix = prefix
-        obj.hashed_key = hashed_key
+        api_key_obj.id = pk
+        api_key_obj.prefix = prefix
+        api_key_obj.hashed_key = hashed_key
 
         return key
 
-    def create_key(self, **kwargs: typing.Any) -> typing.Tuple["AbstractAPIKey", str]:
-        # Prevent from manually setting the primary key.
-        kwargs.pop("id", None)
-        obj = self.model(**kwargs)
-        key = self.assign_key(obj)
-        obj.save()
-        return obj, key
+    def create_key(self, **kwargs: typing.Any) -> typing.Tuple['AbstractAPIKey', str]:
+        """Generate API key."""
+        # Prevent manually setting the primary key.
+        kwargs.pop('id', None)
+        api_key_instance = self.model(**kwargs)
+        key = self.assign_key(api_key_instance)
+        api_key_instance.save()
+        return api_key_instance, key
 
     def get_usable_keys(self) -> models.QuerySet:
+        """Return active api keys."""
         return self.filter(revoked=False)
 
-    def get_from_key(self, key: str) -> "AbstractAPIKey":
-        prefix, _, _ = key.partition(".")
+    def get_from_key(self, key: str) -> 'AbstractAPIKey':
+        """Return APIKey instance by key."""
+        prefix, _, _ = key.partition('.')
         queryset = self.get_usable_keys()
+        api_key = queryset.get(prefix=prefix)
 
-        try:
-            api_key = queryset.get(prefix=prefix)
-        except self.model.DoesNotExist:
-            raise  # For the sake of being explicit.
-
-        if not api_key.is_valid(key):
-            raise self.model.DoesNotExist("Key is not valid.")
-        else:
+        if api_key.is_valid(key):
             return api_key
 
+        raise self.model.DoesNotExist(pgettext_lazy('errors', 'Key is not valid.'))
+
     def is_valid(self, key: str) -> bool:
+        """Check key validity."""
+        ret_validity = False
         try:
             api_key = self.get_from_key(key)
         except self.model.DoesNotExist:
-            return False
+            ret_validity = False
+        else:
+            ret_validity = True
 
         if api_key.has_expired:
-            return False
+            ret_validity = False
 
-        return True
+        return ret_validity
 
 
 class APIKeyManager(BaseAPIKeyManager):
-    pass
+    """API key model manager."""
 
 
 class AbstractAPIKey(models.Model):
+    """Abstract base class for API keys."""
+
     objects = APIKeyManager()
 
-    id = models.CharField(max_length=150, unique=True, primary_key=True, editable=False)
-    prefix = models.CharField(max_length=8, unique=True, editable=False)
-    hashed_key = models.CharField(max_length=150, editable=False)
-    created = models.DateTimeField(auto_now_add=True, db_index=True)
+    id = models.CharField(
+        pgettext_lazy('fields', 'id'), max_length=150, unique=True, primary_key=True, editable=False,
+    )
+    prefix = models.CharField(pgettext_lazy('fields', 'prefix'), max_length=8, unique=True, editable=False)
+    hashed_key = models.CharField(pgettext_lazy('fields', 'hashed key'), max_length=150, editable=False)
+    created = models.DateTimeField(pgettext_lazy('fields', 'created'), auto_now_add=True, db_index=True)
     name = models.CharField(
+        pgettext_lazy('fields', 'name'),
         max_length=50,
         blank=False,
         default=None,
-        help_text=(
-            "A free-form name for the API key. "
-            "Need not be unique. "
-            "50 characters max."
-        ),
+        help_text=pgettext_lazy('helptext', 'A free-form unique name for the API key.'),
     )
     revoked = models.BooleanField(
+        pgettext_lazy('fields', 'revoked'),
         blank=True,
         default=False,
-        help_text=(
-            "If the API key is revoked, clients cannot use it anymore. "
-            "(This cannot be undone.)"
-        ),
+        help_text=pgettext_lazy('helptext', 'If the API key is revoked, clients cannot use it anymore.'),
     )
     expiry_date = models.DateTimeField(
+        pgettext_lazy('fields', 'expiry date'),
         blank=True,
         null=True,
-        verbose_name="Expires",
-        help_text="Once API key expires, clients cannot use it anymore.",
+        help_text=pgettext_lazy('helptext', 'Once API key expires, clients cannot use it anymore.'),
     )
 
-    class Meta:  # noqa
+    class Meta:
+        """Meta class."""
+
         abstract = True
         app_label = 'drf_api_key'
-        ordering = ("-created",)
-        verbose_name = "API key"
-        verbose_name_plural = "API keys"
+        ordering = ('-created',)
+        verbose_name = 'API key'
+        verbose_name_plural = 'API keys'
 
     def __init__(self, *args: typing.Any, **kwargs: typing.Any):
+        """Store the initial value of `revoked` to detect changes.."""
         super().__init__(*args, **kwargs)
-        # Store the initial value of `revoked` to detect changes.
         self._initial_revoked = self.revoked
 
-    def _has_expired(self) -> bool:
+    def is_valid(self, key: str) -> bool:
+        """Verify key."""
+        return type(self).objects.key_generator.verify(key, self.hashed_key)
+
+    def clean(self) -> None:
+        """Clean object."""
+        self._validate_revoked()
+
+    def save(self, *args: typing.Any, **kwargs: typing.Any) -> None:
+        """Validate revoked key before saving."""
+        self._validate_revoked()
+        super().save(*args, **kwargs)
+
+    @property
+    def has_expired(self) -> bool:
+        """Return if key expired or not."""
         if self.expiry_date is None:
             return False
         return self.expiry_date < timezone.now()
 
-    _has_expired.short_description = "Has expired"  # type: ignore
-    _has_expired.boolean = True  # type: ignore
-    has_expired = property(_has_expired)
-
-    def is_valid(self, key: str) -> bool:
-        return type(self).objects.key_generator.verify(key, self.hashed_key)
-
-    def clean(self) -> None:
-        self._validate_revoked()
-
-    def save(self, *args: typing.Any, **kwargs: typing.Any) -> None:
-        self._validate_revoked()
-        super().save(*args, **kwargs)
+    def __str__(self) -> str:
+        """String representation."""
+        return f'{self.name} ({self.prefix})'  # noqa: WPS305
 
     def _validate_revoked(self) -> None:
         if self._initial_revoked and not self.revoked:
-            raise ValidationError(
-                "The API key has been revoked, which cannot be undone."
-            )
-
-    def __str__(self) -> str:
-        return str(self.name)
+            raise ValidationError(pgettext_lazy('errors', 'The API key has been revoked - cannot be undone.'))
 
 
 class APIKey(AbstractAPIKey):
-    pass
+    """API Key model class definition."""
