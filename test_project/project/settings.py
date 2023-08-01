@@ -1,13 +1,14 @@
 import os
 
 import dj_database_url
+from django.utils.translation import pgettext_lazy as _
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = "*(q7fo7duyzqhv$qmiym5#z%w^qqh67a9rqk$jr4n1))nvnql^"
 DEBUG = True
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
-
+CSRF_TRUSTED_ORIGINS = ["http://localhost:8000", "http://127.0.0.0:8000"]
 
 # Application definition
 
@@ -87,6 +88,12 @@ PASSWORD_HASHERS = [
 # Internationalization
 
 LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = 'hu'
+LANGUAGES = (
+    ('hu', _('languages', 'hungarian')),
+    ('en', _('languages', 'english')),
+    ('de', _('languages', 'german')),
+)
 TIME_ZONE = "UTC"
 USE_I18N = True
 USE_L10N = True
