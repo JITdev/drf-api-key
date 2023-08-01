@@ -1,0 +1,28 @@
+# Development package dependencies
+# package handling needed to install/update separatedly:
+pip
+setuptools
+wheel
+packaging
+pipdeptree
+twine
+
+argh==0.26.2                            # watchmedo dependency
+autopep8==2.*                           # PEP8 code formatter
+django-debug-toolbar                    # Display debug information about the current request/response.
+django-dotenv
+django-stubs~=4.2                       # Mypy stubs for Django
+django-stubs-ext~=4.2                   # Extended stubs
+djangorestframework-stubs~=3.14         # PEP-484 stubs for django-rest-framework
+flake8~=6.0                             # Modular source code checker: pep8, pyflakes and co.
+isort==5.12.0                           # A Python utility / library to sort Python imports.
+mypy-extensions==1.0.0                  # Extensions for the mypy typechecker
+nodeenv==1.8.0                          # Wrapper for creating "node virtual env"
+psycopg2-binary                         # PostgreSQL testing.
+types-requests==2.*                     # Typing stubs for requests
+
+# wemake-python-styleguide==0.17.0        # The strictest and most opinionated python linter ever.
+https://github.com/wemake-services/wemake-python-styleguide/archive/refs/heads/master.zip#egg=wemake-python-styleguide
+
+# Process test requirements file
+-r requirements.txt
