@@ -11,10 +11,10 @@ An API key is composed of two items:
 
 The generated key that clients use to [make authorized requests](#making-authorized-requests) is `GK = P.SK`. It is treated with the same level of care as passwords:
 
-- Only a hashed version is stored in the database. The hash is computed using the default password hasher. [^1]
+- Only a hashed version is stored in the database. The hashing algorithm is sha512. [^1]
 - The generated key is shown only once to the client upon API key creation.
 
-[^1]: All hashers provided by Django should be supported. This package is tested against the [default list of `PASSWORD_HASHERS`](https://docs.djangoproject.com/en/2.2/ref/settings/#std:setting-PASSWORD_HASHERS). See also [How Django stores passwords](https://docs.djangoproject.com/en/2.2/topics/auth/passwords/#how-django-stores-passwords) for more information.
+[^1]: Older versions of this module used the same hashers as Django's [`PASSWORD_HASHERS`](https://docs.djangoproject.com/en/2.2/ref/settings/#std:setting-PASSWORD_HASHERS). These hashers come with a large performance penalty and while critical for passwords, they aren't needed for high-entropy, randomly generated keys like the ones created by this module. Keys stored using these slower hashers will be upgraded when used.
 
 ### Grant scheme
 
@@ -33,7 +33,7 @@ Access is granted if and only if all of the following is true:
 
 Besides, it is NOT recommended to use this package for authentication, i.e. retrieving user information from API keys.
 
-Indeed, **using API keys shifts the responsability of Information Security on your clients**. This induces risks, especially if detaining an API key gives access to confidential information or write operations. For example, an attacker could impersonate clients if they let their API keys leak.
+Indeed, **using API keys shifts the responsibility of Information Security on your clients**. This induces risks, especially if obtaining an API key gives access to confidential information or write operations. For example, an attacker could impersonate clients if they let their API keys leak.
 
 As a best practice, you should apply the _Principle of Least Privilege_: allow only those who require resources to access those specific resources. In other words: **if your client needs to access an endpoint, add API permissions on that endpoint only** instead of the whole API.
 

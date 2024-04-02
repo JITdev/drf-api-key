@@ -3,6 +3,7 @@ import typing
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 from .crypto import KeyGenerator, concatenate, split
 
@@ -82,24 +83,28 @@ class AbstractAPIKey(models.Model):
         blank=False,
         default=None,
         help_text=(
-            "A free-form name for the API key. "
-            "Need not be unique. "
-            "50 characters max."
+            _(
+                "A free-form name for the API key. "
+                "Need not be unique. "
+                "50 characters max."
+            )
         ),
     )
     revoked = models.BooleanField(
         blank=True,
         default=False,
         help_text=(
-            "If the API key is revoked, clients cannot use it anymore. "
-            "(This cannot be undone.)"
+            _(
+                "If the API key is revoked, clients cannot use it anymore. "
+                "(This cannot be undone.)"
+            )
         ),
     )
     expiry_date = models.DateTimeField(
         blank=True,
         null=True,
-        verbose_name="Expires",
-        help_text="Once API key expires, clients cannot use it anymore.",
+        verbose_name=_("Expires"),
+        help_text=_("Once API key expires, clients cannot use it anymore."),
     )
 
     class Meta:  # noqa
@@ -123,7 +128,19 @@ class AbstractAPIKey(models.Model):
     has_expired = property(_has_expired)
 
     def is_valid(self, key: str) -> bool:
-        return type(self).objects.key_generator.verify(key, self.hashed_key)
+        key_generator = type(self).objects.key_generator
+        valid = key_generator.verify(key, self.hashed_key)
+
+        # Transparently update the key to use the preferred hasher
+        # if it is using an outdated hasher.
+        if valid and not key_generator.using_preferred_hasher(self.hashed_key):
+            # Note that since the PK includes the hashed key,
+            # they will be internally inconsistent following this upgrade.
+            # See: https://github.com/florimondmanca/djangorestframework-api-key/issues/128
+            self.hashed_key = key_generator.hash(key)
+            self.save()
+
+        return valid
 
     def clean(self) -> None:
         self._validate_revoked()
@@ -135,7 +152,7 @@ class AbstractAPIKey(models.Model):
     def _validate_revoked(self) -> None:
         if self._initial_revoked and not self.revoked:
             raise ValidationError(
-                "The API key has been revoked, which cannot be undone."
+                _("The API key has been revoked, which cannot be undone.")
             )
 
     def __str__(self) -> str:
